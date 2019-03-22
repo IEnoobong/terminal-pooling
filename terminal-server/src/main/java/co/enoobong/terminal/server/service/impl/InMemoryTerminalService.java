@@ -62,9 +62,7 @@ public class InMemoryTerminalService implements TerminalService {
     try {
       TimeUnit.SECONDS.sleep(1);
     } finally {
-      synchronized (terminalIdToAvailability) {
-        terminalIdToAvailability.put(terminalId, false);
-      }
+      terminalIdToAvailability.put(terminalId, false);
     }
   }
 
@@ -74,10 +72,8 @@ public class InMemoryTerminalService implements TerminalService {
   }
 
   private boolean existByTerminalIdAndIsLocked(String terminalId) {
-    synchronized (terminalIdToAvailability) {
-      final Boolean isLocked = terminalIdToAvailability.get(terminalId);
-      return isLocked != null && isLocked;
-    }
+    final Boolean isLocked = terminalIdToAvailability.get(terminalId);
+    return isLocked != null && isLocked;
   }
 
   @PreDestroy
