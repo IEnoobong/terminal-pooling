@@ -4,10 +4,12 @@ import co.enoobong.terminal.common.config.TerminalConfig;
 import co.enoobong.terminal.server.exception.InvalidRequestException;
 import co.enoobong.terminal.server.exception.TerminalNotAvailableException;
 import java.util.Arrays;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -30,7 +32,13 @@ public class InMemoryTerminalServiceTest {
     given(terminalConfig.getEnd()).willReturn(8);
 
     terminalService = new InMemoryTerminalService(terminalConfig, terminalIds);
+    ReflectionTestUtils.setField(terminalService, "terminalAvailabilityPeriod", 1);
     terminalService.loadData();
+  }
+
+  @After
+  public void tearDown() {
+    terminalService.preDestroy();
   }
 
   @Test
