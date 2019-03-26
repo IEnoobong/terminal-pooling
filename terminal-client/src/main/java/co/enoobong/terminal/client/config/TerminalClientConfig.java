@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.TimeoutRetryPolicy;
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 @EnableRetry
 @Configuration
+@PropertySource("classpath:terminal-client.properties")
 public class TerminalClientConfig {
 
   @Value("${terminal.server.url}")
