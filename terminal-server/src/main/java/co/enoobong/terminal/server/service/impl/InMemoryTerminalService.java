@@ -77,7 +77,7 @@ public class InMemoryTerminalService implements TerminalService {
       terminalIdToAvailability.put(availableTerminal, getAvailableTimeInNanoSecs() + System.nanoTime());
       if (!isInitialized) {
         scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        scheduledExecutorService.scheduleAtFixedRate(this::reactivateUnusedTerminalsAfterPeriod, 4L, 4L, TimeUnit.SECONDS);
+        scheduledExecutorService.scheduleAtFixedRate(this::reactivateUnusedTerminalsAfterPeriod, terminalAvailabilityPeriod, terminalAvailabilityPeriod, TimeUnit.SECONDS);
         isInitialized = true;
       }
       return availableTerminal;
