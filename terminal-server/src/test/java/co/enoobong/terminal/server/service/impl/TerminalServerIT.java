@@ -6,9 +6,13 @@ import co.enoobong.terminal.common.model.response.TerminalResponse;
 import com.googlecode.junittoolbox.MultithreadingTester;
 import com.googlecode.junittoolbox.RunnableAssert;
 import java.util.concurrent.TimeUnit;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import static co.enoobong.terminal.server.util.TestUtils.BASE_TERMINAL_PATH;
+import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -41,12 +46,39 @@ public class TerminalServerIT {
   @Autowired
   private RetryTemplate retryTemplate;
 
+  @Rule
+  public final ExpectedException expectedException = ExpectedException.none();
+  @Value("${terminal.available.period.seconds}")
+  private long terminalAvailabilityPeriod;
+  private RestTemplate testRestTemplate;
+
+  @Before
+  public void setup() {
+    testRestTemplate = new RestTemplate();
+    testRestTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:" + randomServerPort));
+  }
+
+
+  @Test
+  public void attemptToProcessTerminalAfterTimeFrameExpiredShouldFail() throws InterruptedException {
+    final ResponseEntity<TerminalResponse> terminalResponse = testRestTemplate.getForEntity(BASE_TERMINAL_PATH + "/availableTerminalId", TerminalResponse.class);
+
+    assertEquals(200, terminalResponse.getStatusCodeValue());
+
+    TimeUnit.SECONDS.sleep(terminalAvailabilityPeriod);
+
+    final TerminalPayload terminalPayload = new TerminalPayload(terminalResponse.getBody().getTerminalId(), 2,
+            System.currentTimeMillis());
+
+    expectedException.expect(isA(RestClientException.class));
+
+    testRestTemplate.postForObject(BASE_TERMINAL_PATH, terminalPayload, String.class);
+  }
+
   @Test
   public void concurrentUserTests() {
     final int numberOfClients = 30;
 
-    RestTemplate testRestTemplate = new RestTemplate();
-    testRestTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:" + randomServerPort));
     final RunnableAssert runnableAssert = new RunnableAssert("get terminal id and process") {
       @Override
       public void run() {
