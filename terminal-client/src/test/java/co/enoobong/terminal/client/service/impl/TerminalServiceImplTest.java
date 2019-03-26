@@ -14,6 +14,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -39,7 +41,7 @@ public class TerminalServiceImplTest {
   public void processesRequest() {
     final TerminalResponse terminalResponse = new TerminalResponse("1001");
     final String expectedResponse = "success";
-    final RetryCallback<?, RestClientException> getAvailableIdCallback = any();
+    final RetryCallback<?, RestClientException> getAvailableIdCallback = any(RetryCallback.class);
     final ArgumentCaptor<RetryCallback<?, RestClientException>> argumentCaptor = ArgumentCaptor.forClass(RetryCallback.class);
     final ArgumentCaptor<RecoveryCallback> recoveryCallbackCaptor = ArgumentCaptor.forClass(RecoveryCallback.class);
     final ArgumentCaptor<RetryState> retryStateCaptor = ArgumentCaptor.forClass(RetryState.class);
@@ -56,9 +58,15 @@ public class TerminalServiceImplTest {
     final String response = terminalService.processRequest(null);
 
     assertEquals(expectedResponse, response);
+
     verify(sequenceGenerator).getNext();
     verify(retryTemplate, times(2)).execute(argumentCaptor.capture(), recoveryCallbackCaptor.capture(),
             retryStateCaptor.capture());
+
+    assertNotNull(argumentCaptor.getValue());
+    assertNull(recoveryCallbackCaptor.getValue());
+    assertNull(retryStateCaptor.getValue());
+
     verify(restTemplate).getForObject(anyString(), any(Class.class));
     verify(restTemplate).postForObject(anyString(), any(TerminalPayload.class), (Class<String>) any(Class.class));
 
