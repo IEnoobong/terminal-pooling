@@ -3,6 +3,7 @@ package co.enoobong.terminal.client.config;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -17,15 +18,13 @@ import org.springframework.web.client.RestTemplate;
 @PropertySource("classpath:terminal-client.properties")
 public class TerminalClientConfig {
 
-  @Value("${terminal.server.url}")
-  private String terminalServerUrl;
-
   @Value("${terminal.retry.timeout.seconds}")
   private int retryTimeout;
 
   @Bean
+  @LoadBalanced
   public RestTemplate restTemplate(RestTemplateBuilder builder) {
-    return builder.rootUri(terminalServerUrl).build();
+    return builder.rootUri("http://terminal-server").build();
   }
 
   @Bean

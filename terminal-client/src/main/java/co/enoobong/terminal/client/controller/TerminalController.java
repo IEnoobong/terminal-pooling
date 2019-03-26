@@ -2,7 +2,6 @@ package co.enoobong.terminal.client.controller;
 
 import co.enoobong.terminal.client.service.TerminalService;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,7 +15,6 @@ public class TerminalController {
 
   private final TerminalService terminalService;
 
-  @Autowired
   public TerminalController(TerminalService terminalService) {
     this.terminalService = terminalService;
   }

@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="discovery-server" />
         <module name="terminal-client" />
         <module name="terminal-common" />
         <module name="terminal-server" />
@@ -20,6 +21,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="discovery-server" options="-parameters" />
       <module name="terminal-client" options="-parameters" />
       <module name="terminal-common" options="-parameters" />
       <module name="terminal-server" options="-parameters" />

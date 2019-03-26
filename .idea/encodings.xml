@@ -2,6 +2,7 @@
 <project version="4">
   <component name="Encoding" addBOMForNewFiles="with NO BOM">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discovery-server" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/terminal-client" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/terminal-common" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/terminal-server" charset="UTF-8" />
