@@ -75,12 +75,16 @@ public class InMemoryTerminalService implements TerminalService {
               .map(Map.Entry::getKey)
               .orElseThrow(() -> new TerminalNotAvailableException("terminal not available"));
       terminalIdToAvailability.put(availableTerminal, getAvailableTimeInNanoSecs() + System.nanoTime());
-      if (!isInitialized) {
-        scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        scheduledExecutorService.scheduleAtFixedRate(this::reactivateUnusedTerminalsAfterPeriod, terminalAvailabilityPeriod, terminalAvailabilityPeriod, TimeUnit.SECONDS);
-        isInitialized = true;
-      }
+      initializeCleanUp();
       return availableTerminal;
+    }
+  }
+
+  private void initializeCleanUp() {
+    if (!isInitialized) {
+      scheduledExecutorService = Executors.newScheduledThreadPool(1);
+      scheduledExecutorService.scheduleAtFixedRate(this::reactivateUnusedTerminalsAfterPeriod, terminalAvailabilityPeriod, terminalAvailabilityPeriod, TimeUnit.SECONDS);
+      isInitialized = true;
     }
   }
 
