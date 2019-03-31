@@ -13,10 +13,11 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class InMemoryTerminalService implements TerminalService {
 
   private static final Logger log = LoggerFactory.getLogger(InMemoryTerminalService.class);
@@ -25,7 +26,9 @@ public class InMemoryTerminalService implements TerminalService {
   private ScheduledExecutorService scheduledExecutorService;
 
   private final TerminalConfig terminalConfig;
-  private final String[] terminalIds;
+
+  @Value("${available.terminals}")
+  private String[] terminalIds;
 
   @Value("${terminal.processing.time.seconds}")
   private long terminalProcessingTime;
@@ -33,7 +36,12 @@ public class InMemoryTerminalService implements TerminalService {
   @Value("${terminal.available.period.seconds}")
   private long terminalAvailabilityPeriod;
 
-  public InMemoryTerminalService(TerminalConfig terminalConfig, @Value("${available.terminals}") String[] terminalIds) {
+  @Autowired
+  public InMemoryTerminalService(TerminalConfig terminalConfig) {
+    this.terminalConfig = terminalConfig;
+  }
+
+  public InMemoryTerminalService(TerminalConfig terminalConfig, String[] terminalIds) {
     this.terminalConfig = terminalConfig;
     this.terminalIds = terminalIds;
   }
